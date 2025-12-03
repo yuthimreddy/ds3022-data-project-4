@@ -1,0 +1,52 @@
+Parameters:
+  UvaId:
+    Description: Enter your UVA computing ID
+    Type: String
+    MinLength: 3
+    MaxLength: 9
+    AllowedPattern: ^[a-zA-Z0-9]*$
+
+Resources:
+  access:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: access
+      AttributeDefinitions:
+        - AttributeName: event_key
+          AttributeType: S
+        - AttributeName: access_time
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: event_key
+          KeyType: HASH
+        - AttributeName: access_time
+          KeyType: RANGE
+  Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${UvaId}-access"
+      PublicAccessBlockConfiguration:
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: Statement1
+            Effect: Allow
+            Principal:
+              AWS: arn:aws:iam::440848399208:root
+            Action: s3:PutObject
+            Resource: !Sub "arn:aws:s3:::${Bucket}/*"
+
+Outputs:
+  BucketName:
+    Description: Name of your S3 bucket
+    Value: !Ref Bucket
+  TableName:
+    Description: Name of your DynamoDB table
+    Value: !Ref access
