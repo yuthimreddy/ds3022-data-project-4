@@ -6,7 +6,7 @@ import datetime
 import json
 import os
 
-BUCKET_NAME = 'BUCKET_NAME'
+BUCKET_NAME = 'hva4zb-access'
 
 def generate_test_event():
     # event_key is an epoch timestamp for now. It should be cast as a string but not in the long form with a decimal point.
